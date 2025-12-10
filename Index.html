@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Muito Bom dia Jojo</title>
+  <style>
+    :root{--bg:#FFF9F0;--card:#fff;--accent:#FF7AA2;--muted:#7a7a7a}
+    *{box-sizing:border-box}
+    body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin:0;background:linear-gradient(180deg,#FFF9F0 0%, #FFF1F8 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+    .wrap{width:100%;max-width:720px;background:var(--card);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,0.08);padding:28px;transform:translateY(0);transition:transform .35s ease}
+    header{display:flex;gap:16px;align-items:center}
+    .logo{width:72px;height:72px;border-radius:14px;background:linear-gradient(135deg,#FFD1E8,#FFF39A);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#3a2b3a;box-shadow:0 6px 18px rgba(255,120,160,0.18)}
+    h1{margin:0;font-size:20px;color:#3a2b3a}
+    p.lead{margin:6px 0 18px;color:var(--muted)}
+
+    .question{padding:18px;border-radius:12px;margin-bottom:12px;background:linear-gradient(180deg,rgba(255,255,255,0.85),rgba(250,250,252,0.85));border:1px solid rgba(0,0,0,0.03)}
+    .q-title{margin:0 0 10px;font-weight:600}
+    .options{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{padding:12px 14px;border-radius:10px;border:2px solid rgba(0,0,0,0.04);background:white;cursor:pointer;min-width:120px;text-align:center;transition:transform .12s ease,box-shadow .12s ease}
+    .btn:active{transform:translateY(1px)}
+    .btn.selected{box-shadow:0 8px 20px rgba(0,0,0,0.08);border-color:var(--accent);transform:translateY(-4px)}
+    .hint{margin-top:10px;color:var(--muted);font-size:14px}
+
+    .progress{height:8px;background:rgba(0,0,0,0.05);border-radius:999px;margin:14px 0}
+    .bar{height:8px;border-radius:999px;background:linear-gradient(90deg,var(--accent),#FFD36B);width:0%}
+
+    .controls{display:flex;gap:8px;justify-content:flex-end;margin-top:6px}
+    .next{background:var(--accent);color:white;padding:10px 14px;border-radius:10px;border:none;cursor:pointer}
+    .next[disabled]{opacity:0.4;cursor:not-allowed}
+
+    .result{padding:14px;margin-top:12px;border-radius:12px;background:linear-gradient(180deg,#F9FFF6,#EEFFF0);border:1px solid rgba(0,0,0,0.03);display:none}
+
+    .final{display:none;margin-top:16px;text-align:center}
+    .final a{display:inline-block;padding:12px 18px;border-radius:12px;text-decoration:none;background:linear-gradient(90deg,#25D366,#128C7E);color:white;font-weight:600}
+
+    /* animations */
+    @keyframes shake{0%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}100%{transform:translateX(0)}}
+
+    /* responsive */
+    @media (max-width:520px){.btn{min-width:100%}.logo{width:58px;height:58px}}
+  </style>
+</head>
+<body>
+  <div class="wrap" role="application">
+    <header>
+      <div class="logo">Jojo</div>
+      <div>
+        <h1>Muito Bom dia, meu Cheiro.</h1>
+        <p class="lead">Vamos interagir logo cedo... Responda as perguntas abaixo para conhecimento diario  😊</p>
+      </div>
+    </header>
+
+    <div class="progress" aria-hidden><div class="bar" id="bar"></div></div>
+
+    <!-- Pergunta 1 -->
+    <section class="question" data-q="1">
+      <div class="q-title">Pergunta 01: Em uma escala de Ótimo, Mais ou menos, ou Péssimo — como está o seu humor hoje?</div>
+      <div class="options" role="list">
+        <button class="btn option" data-value="otimo">Ótimo</button>
+        <button class="btn option" data-value="maisoumenos">Mais ou menos</button>
+        <button class="btn option" data-value="pessimo">Péssimo</button>
+      </div>
+      <div class="hint" id="hint-1"></div>
+    </section>
+
+    <!-- Pergunta 2 -->
+    <section class="question" data-q="2">
+      <div class="q-title">Pergunta 02: Você dormiu muito bem essa noite passada?</div>
+      <div class="options">
+        <button class="btn option" data-value="sim-muito">Sim, muito bem.</button>
+        <button class="btn option" data-value="nao-batman">Não, você não tava comigo meu Batman.</button>
+        <button class="btn option" data-value="sim-melhor">Sim, melhor impossível.</button>
+      </div>
+      <div class="hint" id="hint-2"></div>
+    </section>
+
+    <!-- Pergunta 3 -->
+    <section class="question" data-q="3">
+      <div class="q-title">Pergunta 03: Complete a frase... "Após eu sair daqui parece que eu desligo ______."</div>
+      <div class="options">
+        <button class="btn option" data-value="mente">a mente</button>
+        <button class="btn option" data-value="computador">o computador</button>
+        <button class="btn option" data-value="botaozinho">botaozinho</button>
+      </div>
+      <div class="hint" id="hint-3"></div>
+    </section>
+
+    <!-- Pergunta 4 -->
+    <section class="question" data-q="4">
+      <div class="q-title">Pergunta 04: Eu mereço uns beijo, não acha?</div>
+      <div class="options">
+        <button class="btn option" data-value="sim">Sim</button>
+        <button class="btn option" data-value="merece-muito">Você merece muito</button>
+        <button class="btn option" data-value="vou-dar">Eu vou te dar muitos, senhor</button>
+      </div>
+      <div class="hint" id="hint-4"></div>
+    </section>
+
+    <div class="controls">
+      <button class="next" id="nextBtn" disabled>Próxima</button>
+    </div>
+
+    <div class="result" id="resultBox" aria-live="polite"></div>
+
+    <div class="final" id="finalBox">
+      <p style="margin:0 0 12px;font-weight:600">Prontinho! Obrigado por brincar 😊</p>
+      <a id="whatsappLink" href="https://api.whatsapp.com/send/?phone=5564993419602&text&type=phone_number&app_absent=0" target="_blank" rel="noopener">Clique aqui pra dizer que gostou muito</a>
+    </div>
+
+  </div>
+
+  <script>
+    (function(){
+      const questions = Array.from(document.querySelectorAll('.question'));
+      const total = questions.length;
+      let current = 0;
+      const state = {};
+      const bar = document.getElementById('bar');
+      const nextBtn = document.getElementById('nextBtn');
+      const resultBox = document.getElementById('resultBox');
+      const finalBox = document.getElementById('finalBox');
+
+      function showQuestion(index){
+        questions.forEach((q,i)=>{
+          q.style.display = i === index ? 'block' : 'none';
+        });
+        updateProgress();
+        nextBtn.disabled = !hasAnswer(index);
+        resultBox.style.display = 'none';
+      }
+
+      function updateProgress(){
+        const pct = Math.round((Object.keys(state).length/total)*100);
+        bar.style.width = pct + '%';
+      }
+
+      function hasAnswer(idx){
+        return !!state['q'+(idx+1)];
+      }
+
+      // attach option handlers
+      document.querySelectorAll('.option').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const qEl = btn.closest('.question');
+          const qIdx = Number(qEl.getAttribute('data-q')) - 1;
+          // toggle selection
+          qEl.querySelectorAll('.option').forEach(b=>b.classList.remove('selected'));
+          btn.classList.add('selected');
+          state['q'+(qIdx+1)] = btn.getAttribute('data-value');
+          nextBtn.disabled = false;
+
+          // immediate feedback for Q1 and Q2
+          if(qIdx === 0){
+            const h = document.getElementById('hint-1');
+            if(state.q1 === 'otimo') h.textContent = '🎉 Uau, que ótimo!';
+            else if(state.q1 === 'pessimo') h.textContent = '😢 Poxa, que pena...';
+            else h.textContent = '👍 Entendi — obrigado por compartilhar.';
+          }
+
+          if(qIdx === 1){
+            const h2 = document.getElementById('hint-2');
+            if(state.q2 === 'sim-muito') h2.textContent = '❓ Sério? Que sonho você teve?';
+            else if(state.q2 === 'nao-batman') h2.textContent = 'Sim, eu sabia 😉';
+            else h2.textContent = 'Que maravilha — melhor impossível!';
+          }
+
+          if(qIdx === 2){
+            const h3 = document.getElementById('hint-3');
+            if(state.q3 === 'botaozinho'){
+              h3.textContent = '✅ Resposta correta!';
+            } else {
+              h3.textContent = '❌ Só aceitamos "botaozinho" como resposta correta.';
+              // shake to indicate wrong
+              const opt = qEl;
+              opt.style.animation = 'shake .5s';
+              setTimeout(()=>opt.style.animation = '',500);
+            }
+          }
+
+        });
+      });
+
+      // next button
+      nextBtn.addEventListener('click', ()=>{
+        // if current is last, finalize
+        if(current < total - 1){
+          current++;
+          showQuestion(current);
+          // disable next until pick
+          nextBtn.disabled = !hasAnswer(current);
+        } else {
+          // finalize: show summary
+          summarize();
+        }
+      });
+
+      function summarize(){
+        // ensure Q3 correct
+        const q3 = state.q3;
+        if(q3 !== 'botaozinho'){
+          // focus on Q3
+          current = 2; showQuestion(current);
+          document.getElementById('hint-3').textContent = 'Você precisa escolher "botaozinho" para continuar.';
+          return;
+        }
+
+        // build result
+        resultBox.innerHTML = '';
+        resultBox.style.display = 'block';
+        const ul = document.createElement('div');
+        ul.innerHTML = `<strong>Resumo das suas respostas</strong><br/><br/>`;
+
+        // Q1 map
+        const map1 = {otimo:'Ótimo 🎉', maisoumenos:'Mais ou menos', pessimo:'Péssimo 😢'};
+        const map2 = {'sim-muito':'Sim, muito bem. ❓','nao-batman':'Não — você não tava comigo Batman. (Sim, eu sabia 😉)','sim-melhor':'Sim, melhor impossível.'};
+        const map3 = {mente:'a mente', computador:'o computador', botaozinho:'botaozinho ✅'};
+        const map4 = {sim:'Sim 😘', 'merece-muito':'Você merece muito 😍', 'vou-dar':'Eu vou te dar muitos, senhor 😘'};
+
+        ul.innerHTML += `<p>1) Humor: ${map1[state.q1] || '—'}</p>`;
+        ul.innerHTML += `<p>2) Sono: ${map2[state.q2] || '—'}</p>`;
+        ul.innerHTML += `<p>3) Completar: "Após eu sair daqui parece que eu desligo ${map3[state.q3] || '—'}"</p>`;
+
+        ul.innerHTML += `<p>4) Beijos: ${map4[state.q4] || '—'}</p>`;
+
+        resultBox.appendChild(ul);
+
+        // show final CTA
+        finalBox.style.display = 'block';
+        // scroll into view lightly
+        finalBox.scrollIntoView({behavior:'smooth', block:'center'});
+      }
+
+      // initial
+      showQuestion(0);
+
+      // keyboard accessibility: allow Enter to act on selected or next
+      document.addEventListener('keydown', (e)=>{
+        if(e.key === 'Enter'){
+          if(!nextBtn.disabled) nextBtn.click();
+        }
+      });
+
+    })();
+  </script>
+</body>
+</html>
